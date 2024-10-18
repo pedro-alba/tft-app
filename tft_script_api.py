@@ -6,8 +6,7 @@ import plotly.express as px
 import random
 
 # Substitute this with your actual API key
-API_KEY = "RGAPI-93984716-7760-4e98-bd95-75b2605162f8"
-
+API_KEY = "RGAPI-05263a1a-f6a0-4d2c-ba22-5cdf9d6cf5e6"
 
 async def main(players, max_games_per_player=10):
     regiao = "americas"
@@ -52,8 +51,6 @@ async def main(players, max_games_per_player=10):
                                 "players_eliminated": player_data["players_eliminated"],
                                 "total_damage_to_players": player_data["total_damage_to_players"],
                                 "tft_game_type": game_info["tft_game_type"],
-                                "units": player_data["units"],  # Store the units used by the player
-                                "elo": game_info["ranked_info"]["tier"]  # Assuming the elo is stored in the ranked_info
                             })
                             games_fetched += 1
 
@@ -77,36 +74,7 @@ def assign_colors(players):
         colors[player] = f"#{random.randint(0, 0xFFFFFF):06x}"  # Random hex color
     return colors
 
-# Function to display charts for individual players
-def display_individual_charts(df, player_colors):
-    for game_name in df['game_name'].unique():
-        player_df = df[df['game_name'] == game_name]
-
-        # Top 3 units with highest percentage in top 4 placements
-        top_units = {}
-        for index, row in player_df.iterrows():
-            for unit in row["units"]:
-                if unit not in top_units:
-                    top_units[unit] = 0
-                if row['placement'] <= 4:
-                    top_units[unit] += 1
-
-        top_units_df = pd.DataFrame(list(top_units.items()), columns=['Unit', 'Count'])
-        top_units_df = top_units_df.nlargest(3, 'Count')
-
-        # Create a bar chart for top units
-        fig_top_units = px.bar(top_units_df, x='Unit', y='Count', title=f"Top 3 Unidades para {game_name}",
-                                color_discrete_sequence=[player_colors[game_name]])
-        st.plotly_chart(fig_top_units)
-
-        # Evolution of elo by game
-        elo_df = player_df[['elo', 'placement']]
-        elo_df['Game'] = elo_df.index + 1  # Assign a game number
-        fig_elo_evolution = px.line(elo_df, x='Game', y='elo', title=f"Evolução de Elo para {game_name}",
-                                     markers=True, color_discrete_sequence=[player_colors[game_name]])
-        st.plotly_chart(fig_elo_evolution)
-
-# Function to display overall player stats summary
+# Function to display player stats summary
 def display_charts(df, colors):
     st.title("Gráficos de Desempenho dos Jogadores de TFT")
 
@@ -172,6 +140,5 @@ if __name__ == "__main__":
         if not df.empty:
             player_colors = assign_colors(df['game_name'].unique())
             display_charts(df, player_colors)
-            display_individual_charts(df, player_colors)  # Display individual player charts
         else:
             st.warning("Nenhum dado foi encontrado.")
