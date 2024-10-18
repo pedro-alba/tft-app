@@ -1,6 +1,4 @@
 asyncio
 pandas
-random
 plotly
 pulsefire
-streamlit
