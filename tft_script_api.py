@@ -6,7 +6,9 @@ import plotly.express as px
 import random
 
 # Substitute this with your actual API key
-API_KEY = "RGAPI-05263a1a-f6a0-4d2c-ba22-5cdf9d6cf5e6"
+#API_KEY = "RGAPI-05263a1a-f6a0-4d2c-ba22-5cdf9d6cf5e6"
+
+API_KEY = st.secrets["API"]
 
 async def main(players, max_games_per_player=10):
     regiao = "americas"
